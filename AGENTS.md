@@ -22,7 +22,7 @@ Rules:
 8. Use `superwork explain <topic>` when unsure about DSL syntax
    (topics: states, transitions, constraints, expressions).
 
-Homework rules (Bootcamp Homework Edition — see assignment/README.md):
+Homework rules (Cohort 2 edition — see assignment/README.md):
 
 9. The assignment files are the participant's own thinking. Ask questions and
    offer candidates, but do not write their classifications, reasons,
@@ -42,7 +42,15 @@ Homework rules (Bootcamp Homework Edition — see assignment/README.md):
 13. Keep the repository layout: world.yaml and seed.yaml at the root,
     scenarios/*.yaml, .superwork/schema-version. The instructor imports this
     layout for review.
+14. Write rules the Runtime can evaluate: flags as strings or numbers (no
+    true/false), guards read principal.* and the target record's own
+    attributes (no paths through another record), one owned_state entity,
+    and every scenario record present in seed.yaml.
+15. The participant submits with `npm run package`. Never weaken or bypass the
+    packager's validation or secret checks, and never put credentials,
+    personal data or confidential material in any file.
 
 The goal state:
 - superwork validate --summary ends with:  READY FOR STUDIO IMPORT ✓
-- every item of the submission checklist in README.md is done by the participant.
+- every item of the submission checklist in README.md is done by the participant
+  and `npm run package` succeeds.

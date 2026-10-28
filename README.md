@@ -1,195 +1,223 @@
-# Superwork World Starter — Bootcamp Homework Edition
+# Superwork World Starter, Cohort 2 Edition
 
-> **Build the World. Run the World. Try to break the World. Fix the World before the real world does.**
+> **AI proposes. World decides. Runtime commits.**
 
-**Educational Use Only · Source-available · Not Open Source** — Copyright © 2026 Josh Lee. All rights reserved. ([라이선스](#라이선스와-소유권))
+**Educational Use Only · Source-available · Not Open Source.** Copyright © 2026 Josh Lee. All rights reserved. See [License](#license-and-ownership).
 
-이 저장소에서 여러분은 **자신의 업무 하나를 World(실행 가능한 세계)로 모델링**하고,
-그 World를 스스로 깨뜨려 보고, 고치고, 무엇을 왜 그렇게 결정했는지 기록합니다.
+한국어: [README.ko.md](README.ko.md)
 
-- 필요한 것: Node.js 18+, Git, (선택) Claude Code 같은 코딩 에이전트
-- 필요 없는 것: Superwork 계정, 로그인, 초대, Studio 접근 — **이 숙제는 전부 로컬에서 완료됩니다.**
+In this repository you model **one piece of your own work as a World**: what exists (Entities), where it can be (States), what changes it
+and who may do that (Transitions), and what must never happen (Constraints). Then you try to break it, fix it with World rules, and
+record why you decided what you decided.
 
-수업에서는 강사가 Superwork Studio로 같은 과정을 시연합니다. 여러분은 그 과정을
-**직접 생각하며** 이 저장소에서 따라 합니다.
+- **You need:** Node.js 20 or newer, Git, a GitHub account, a text editor. An AI coding tool (Claude Code, Cursor, Copilot, …) is optional.
+- **You do not need:** a Superwork account, a login, an invitation or access to Superwork Studio. **The whole homework runs on your computer.**
+- **Execution happens at the review.** This kit validates your World and you desk-check your scenarios by hand. At your 1:1 review the
+  instructor imports your submission into the Superwork Runtime, runs the same scenarios and compares the results with your predictions.
 
-> **제출 마감: 2026-10-04 23:59 KST** (October 4, 2026, 11:59 PM Korea Standard Time)
+**Submission deadline:** `<announced by the instructor>` · **Submission link:** `<announced by the instructor>`
 
-> **⚠️ 민감정보 주의**
-> 실제 업무를 모델링해도 좋지만 회사 기밀, 고객 개인정보, API Key, 계정정보, 내부 시스템 주소 등 민감정보를 저장소에 올리지 마세요.
-> 회사명·고객명·사람 이름·금액·식별정보 등은 필요하면 익명화하거나 예시 데이터로 바꾸세요.
-> 비밀값(secret)이나 계정 정보(credential)는 커밋하지 말고, 공유 권한이 없는 회사 문서는 포함하지 마세요.
-> ZIP으로 제출하더라도 공유 권한이 없는 정보를 넣어도 된다는 뜻은 아닙니다.
+> **⚠️ Sensitive information.** You may model real work, but never put company secrets, customer personal data, API keys, account
+> details or internal system addresses in this repository. Anonymize company, customer and people names, amounts and identifiers, or
+> replace them with example data. A ZIP submission is no exception.
 
 ---
 
-## 0. 시작하기 (10분)
+## 0. Set up (10 minutes)
 
 ```bash
-git clone https://github.com/swit001/superwork-starter.git && cd superwork-starter
+git clone https://github.com/swit001/superwork-starter.git my-world
+cd my-world
 npm install
-npm run validate          # 템플릿 상태 그대로 통과해야 정상입니다
+npm run validate          # the template must pass as it is: "Your world has no issues. ✓"
 ```
 
-제출은 GitHub 저장소 URL(기본) 또는 저장소 ZIP(대체)으로 합니다 — [제출 체크리스트](#5-제출-체크리스트) 참고.
-GitHub로 제출하려면 이 저장소를 여러분의 계정으로 가져가세요 (Fork 또는 새 저장소로 push).
+Check your tools first if something fails: `node --version` (20 or newer), `git --version`. See [Troubleshooting](#7-troubleshooting).
+
+Want to keep your work on GitHub? Create an empty repository in your account and push to it
+(`git remote set-url origin <your repository URL>` then `git push -u origin main`). A private repository is fine; the submission is a ZIP.
 
 ---
 
-## 1. 숙제의 흐름
+## 1. Commands
 
-```
-CHOOSE → MODEL → VALIDATE → RUN → BREAK → FIX → RE-RUN → REFLECT → SUBMIT
-```
+| Command | What it does |
+|---|---|
+| `npm run validate` | Checks `world.yaml` against the `superwork.world/v1` language and tells you what is wrong and how to fix it |
+| `npm run summary` | The same check as a short summary (counts, PASS per check) |
+| `npm run explain -- <topic>` | Language help. Topics: `states`, `transitions`, `constraints`, `expressions` |
+| `npm run export` | Writes a normalized copy and `summary.json` to `dist/` |
+| `npm run evidence` | Saves the summary to `evidence/validate-summary.txt` |
+| `npm run package` | Validates, then builds your submission ZIP in `submission/` (see [Submit](#5-submit)) |
 
-| 단계 | 여러분이 하는 일 | 결과물 |
+The tools are the published packages `@superwork/cli` 1.1.1 and `@superwork/world-spec` 1.1.1 (pinned in `package.json`).
+The last summary line, `READY FOR STUDIO IMPORT ✓`, means your file is in the format the instructor can import. You do not import anything yourself.
+
+**What validate checks:** the structure, references, transitions and constraint expressions of `world.yaml`.
+**What validate does not check:** whether your business rules are right. A World without a "no self-approval" rule is still valid.
+That is why there are scenarios and a BREAK step.
+
+---
+
+## 2. Day 1: World Design
+
+Work in this order. Each step has a file where you write your own reasoning.
+
+| Step | Question | Where |
 |---|---|---|
-| **CHOOSE** | World로 만들 업무 하나를 고르고, World Model이 필요한 이유를 씁니다 | `assignment/world-fit.md` |
-| **MODEL** | Entity · State · Transition · Constraint(ESTC)를 결정하고 `world.yaml`에 선언합니다 | `world.yaml`, `assignment/entity-decisions.md`, `assignment/modeling-decisions.md` |
-| **VALIDATE** | `npm run validate` 로 World가 규격에 맞는지 확인합니다 | `evidence/` |
-| **RUN** | 정상 시나리오 하나를 쓰고, `world.yaml`을 보며 손으로 판정(desk-check)합니다 | `scenarios/happy-path.yaml` |
-| **BREAK** | World를 깨뜨릴 공격 시나리오 하나를 쓰고 판정합니다 | `scenarios/adversarial.yaml`, `assignment/break-fix.md` |
-| **FIX** | 발견한 설계 빈틈을 **World 규칙을 바꿔서** 고칩니다 | `world.yaml`, `assignment/break-fix.md` |
-| **RE-RUN** | 다시 validate하고, 같은 시나리오의 결과를 다시 판정합니다 | `assignment/break-fix.md`, `evidence/` |
-| **REFLECT** | 배운 것을 짧게 씁니다 | `assignment/reflection.md` |
-| **SUBMIT** | GitHub 저장소 URL(또는 ZIP)을 제출합니다 | 아래 체크리스트 |
+| **Mission & domain** | Which piece of work? What outcome counts as success? What is out of scope? | `world.mission` in `world.yaml`, `assignment/world-fit.md` |
+| **Ontology** | Which concepts exist in this work? Which are things, which are facts about things, which are steps? | `assignment/entity-decisions.md` |
+| **Entity (E)** | What is tracked? Pick one core Work entity with a lifecycle. | `entities:` |
+| **State (S)** | Where can the core entity be? Which states are final? | `states:`, `terminal_states:` |
+| **Transition (T)** | What changes the state, from where to where, and which role may do it? | `transitions:` |
+| **Constraint (C)** | What must never be allowed (self-approval, limits, missing inputs)? | `constraints:`, attached as `guards:` |
+| **World Model Canvas** | One page that shows the whole World before you write YAML | [`docs/world-model-canvas.md`](docs/world-model-canvas.md) |
 
-자세한 과제 요건: [`assignment/README.md`](assignment/README.md)
+Start from the example in `world.yaml` (a purchase request) or from the blank [`templates/world.template.yaml`](templates/world.template.yaml).
+Language reference: [`docs/world-dsl.md`](docs/world-dsl.md). Concepts: [`docs/concepts.md`](docs/concepts.md).
+
+## 3. Day 2: World Execution (desk-check)
+
+| Step | What you do | Where |
+|---|---|---|
+| **Validate** | `npm run validate` until there are no issues; save before/after evidence | `evidence/` |
+| **Proposal → adjudication** | Write a scenario: an actor (`as`) *proposes* a transition on a record. Predict the World's decision: **ALLOW** or **DENY**, and why | `scenarios/happy-path.yaml` |
+| **Guard and execution** | Desk-check in order: state → role → guards → global constraints. The first failure decides DENY | [`scenarios/README.md`](scenarios/README.md) |
+| **Commit and audit** | On ALLOW the record moves to the `to` state; that new state is where the next step starts. Write each step's reason in `because:`; together they are your audit trail | your scenarios |
+| **Runtime loop** | Chain steps on one record: propose → decide → commit → next proposal | your scenarios |
+| **BREAK → FIX** | Write an adversarial scenario that tries to make a forbidden thing happen. If it would be allowed, fix the World rules, validate, predict again | `scenarios/adversarial.yaml`, `assignment/break-fix.md` |
+| **Multi-agent collaboration** | Give agents and people different roles: one drafts, another checks, a person approves. Guards keep the maker from being the checker | [`examples/mini-agentic-world/`](examples/mini-agentic-world/) |
+| **Mini Agentic World** | Put it together: your World, your seed records, at least one happy path and one adversarial scenario | your repository |
+
+Scenarios are **predictions**. Never write that a scenario "ran" or "passed". At the review, the instructor runs exactly your `record`,
+`as` and `transition` values on the Runtime and you compare the results together. A wrong prediction is good learning material: keep it.
+
+### Write rules the Runtime can evaluate
+
+These keep your predictions and the Runtime result comparable:
+
+1. **Flags as strings or numbers.** Write `x == "yes"` or `x == 1`. The language has no `true` / `false`.
+2. **Read the record and the principal directly.** Guards may use `principal.id`, `principal.roles` and attributes of the target record
+   (`request.amount`). Avoid paths that go through another record (`job.spec.version`): copy the fact you need onto the record instead.
+3. **One entity owns the state machine** (`owned_state: true`). Model other lifecycles as attributes or in a separate World.
+4. **Seed every scenario.** Each scenario's `record` must exist in `seed.yaml` with a declared state.
 
 ---
 
-## 2. 명령어
-
-```bash
-npm run validate      # World 규격 검사 — 문제가 있으면 어디가 왜 틀렸고 어떻게 고치는지 알려줍니다
-npm run summary       # 요약 + 마지막 줄 READY FOR STUDIO IMPORT ✓
-npm run evidence      # 요약 결과를 evidence/validate-summary.txt 로 저장 (제출 증거)
-npx superwork explain <topic>   # DSL 도움말 (states | transitions | constraints | expressions)
-```
-
-### validate가 확인하는 것
-- `world.yaml`이 `superwork.world/v1` 규격에 맞는지 (구조 · 참조 · transition · constraint 표현식 문법)
-- 선언한 상태 · 역할 · 제약이 서로 올바르게 연결되어 있는지
-
-### validate가 증명하지 **않는** 것
-- 여러분의 업무 규칙이 **옳은지** — 셀프 승인을 막는 규칙이 빠져 있어도 World는 "valid"입니다.
-- **규격에 맞는 World도 나쁜 업무 설계일 수 있습니다.** 그래서 BREAK 단계가 있습니다.
-
-### RUN은 어떻게 하나요?
-이 저장소에는 실행 엔진이 없습니다. 여러분은 각 시나리오를 `world.yaml`을 보며
-**손으로 판정(desk-check)** 하고 예상 결과(ALLOW/DENY)와 이유를 기록합니다.
-제출 후 리뷰에서는 강사가 여러분의 저장소를 Superwork Studio로 가져와
-**같은 시나리오를 실제 Runtime으로 실행**하고, 여러분의 예측과 실제 결과를 함께 비교합니다.
-판정 방법: [`scenarios/README.md`](scenarios/README.md)
-
----
-
-## 3. 저장소 구조
+## 4. Repository layout
 
 ```text
-world.yaml                  여러분의 World (루트에 있어야 합니다 — 위치를 옮기지 마세요)
-seed.yaml                   시나리오의 시작 상태가 되는 샘플 레코드
-scenarios/
-  README.md                 시나리오 형식과 desk-check 방법
-  happy-path.yaml           정상 시나리오
-  adversarial.yaml          공격(Break) 시나리오
-assignment/
-  README.md                 과제 요건
-  world-fit.md              왜 World Model이 필요한가
-  entity-decisions.md       개념 → 분류 → 이유
-  modeling-decisions.md     애매했던 모델링 결정
-  break-fix.md              BEFORE → FIX → AFTER
-  reflection.md             회고
-  claude-code-prompt.md     코딩 에이전트와 함께 할 때
-evidence/
-  README.md                 제출할 증거
-docs/                       개념 · 도메인 예시 · DSL 레퍼런스
-AGENTS.md                   코딩 에이전트의 작업 규칙
-.superwork/schema-version   언어 버전 (수정하지 마세요)
+world.yaml                  your World (keep it at the root)
+seed.yaml                   example records; a scenario starts from one of them
+scenarios/                  happy-path.yaml, adversarial.yaml, README.md (format and desk-check)
+assignment/                 your reasoning: world-fit, entity-decisions, modeling-decisions, break-fix, reflection
+evidence/                   validate results before and after your fix
+templates/                  blank world, seed and scenario templates
+examples/mini-agentic-world a small multi-agent World (synthetic)
+docs/                       concepts, language reference, World Model Canvas
+submission-info.json        your name for the submission manifest
+scripts/package-submission.mjs   the packager behind npm run package
+AGENTS.md                   rules for your AI coding tool
+.superwork/schema-version   language version (do not edit)
 ```
 
 ---
 
-## 4. 코딩 에이전트와 함께
+## 5. Submit
 
-Claude Code 등을 써도 좋습니다. 단, **결정은 여러분이 합니다.**
-에이전트가 답을 먼저 쓰지 않고 여러분에게 묻도록 하는 시작 프롬프트:
-[`assignment/claude-code-prompt.md`](assignment/claude-code-prompt.md).
-에이전트는 `AGENTS.md`의 규칙을 따릅니다.
+1. Fill in `submission-info.json`: `"participant"` (your name as the instructor knows you), optionally `"github"` (your handle), and
+   `"aiAssistedReview"`: `"yes"` or `"no"` (see *Consent* below).
+2. Give your World its own `world.id` (not `my-world`) and set `world.version`.
+3. Run:
+
+   ```bash
+   npm run package
+   ```
+
+   It validates first and stops if the World is not ready, or if a file looks like it holds a secret. It writes
+   `submission/<world-id>-<version>-submission.zip` and prints its SHA-256.
+4. Send that ZIP through the submission link. Nothing is uploaded by the script.
+
+**What is in the ZIP** (one folder `<world-id>-<version>/`):
+
+| Part | Files |
+|---|---|
+| World source | `world.yaml`, `seed.yaml`, `.superwork/schema-version` |
+| Your reasoning and predictions | `assignment/`, `scenarios/` |
+| Validation result | `validation-summary.txt` (made by the packager), your `evidence/` |
+| Submission metadata | `SUBMISSION.json`: your name, World id/version/spec, tool versions, file list with SHA-256 |
+
+Only these folders and files are included; `node_modules/`, `.git/`, `.env` files and anything else are never packaged.
+The same files always give a byte-identical ZIP, so you and the instructor can compare the SHA-256.
+
+**Review results are not part of your submission.** The instructor's assessment is created later, in the review, from your ZIP.
+
+**Several Worlds?** Each World is its own submission. A different `world.id` gives a different ZIP name and is reviewed independently.
+A new version of the same World keeps its `world.id` and raises `world.version`.
+
+### Checklist
+
+- [ ] `npm run validate` reports no issues
+- [ ] `assignment/world-fit.md`: why this work needs a World Model (3 to 6 sentences)
+- [ ] `assignment/entity-decisions.md`: at least 3 final Entities and at least 2 concepts that are *not* Entities, each with a reason
+- [ ] `assignment/modeling-decisions.md`: at least 2 ambiguous decisions (alternatives, choice, reason, ESTC impact)
+- [ ] `scenarios/happy-path.yaml` and `scenarios/adversarial.yaml` with predictions and reasons
+- [ ] `assignment/break-fix.md`: BEFORE → FIX → AFTER on the same scenario
+- [ ] `evidence/`: validate results before and after the fix
+- [ ] `assignment/reflection.md`
+- [ ] no sensitive information
+- [ ] `npm run package` succeeded and you sent the ZIP
+
+The assignment files are written in Korean; answer in Korean or English. Details: [`assignment/README.md`](assignment/README.md).
+
+**Consent when you submit.** By submitting you agree that the instructor reviews your submission, imports it into a private Superwork
+Studio environment to validate, run, test and analyze it, and shows and discusses it with you in a
+1:1 review. You keep ownership of your original work. Anonymized, generalized learnings that cannot reasonably identify you, your
+company, customers or any person may be used to improve Superwork, for education and research. Original submissions are not published.
+Details: [`LICENSE`](LICENSE) section 7.
+
+**AI-assisted review (your choice).** With `"aiAssistedReview": "yes"`, the instructor may also analyze the files in your ZIP with an AI
+model from an external provider (under the provider's commercial API terms; your files are not used to train the model). The AI only
+proposes findings; the instructor decides the assessment. With `"no"`, your World is reviewed without any AI analysis. Your answer is
+recorded in `SUBMISSION.json`.
 
 ---
 
-## 5. 제출 체크리스트
+## 6. Working with an AI coding tool
 
-> **⚠️ 민감정보 주의**
-> 실제 업무를 모델링해도 좋지만 회사 기밀, 고객 개인정보, API Key, 계정정보, 내부 시스템 주소 등 민감정보를 저장소에 올리지 마세요.
-> 회사명·고객명·사람 이름·금액·식별정보 등은 필요하면 익명화하거나 예시 데이터로 바꾸세요.
-> 비밀값(secret)이나 계정 정보(credential)는 커밋하지 말고, 공유 권한이 없는 회사 문서는 포함하지 마세요.
-> ZIP으로 제출하더라도 공유 권한이 없는 정보를 넣어도 된다는 뜻은 아닙니다.
-
-
-- [ ] `world.yaml` — 여러분의 World (`npm run validate` 통과)
-- [ ] `assignment/world-fit.md` — World Model이 필요한 이유 3–6문장
-- [ ] `assignment/entity-decisions.md` — 최종 Entity 3개 이상, Entity가 **아닌** 개념 2개 이상, 각각 이유
-- [ ] `assignment/modeling-decisions.md` — 애매했던 결정 2개 이상 (대안 · 선택 · 이유 · ESTC 영향)
-- [ ] `scenarios/happy-path.yaml` — 정상 시나리오 1개 + 예상 판정과 이유
-- [ ] `scenarios/adversarial.yaml` — 공격 시나리오 1개 + 예상 판정과 이유
-- [ ] `assignment/break-fix.md` — 발견한 설계 빈틈(또는 이미 막혀 있던 실패) · 수정 · 같은 시나리오 재판정
-- [ ] `evidence/` — 수정 전/후 validate 결과
-- [ ] `assignment/reflection.md` — 짧은 회고
-- [ ] 민감정보 없음 — 회사 기밀 · 고객 개인정보 · API Key · 계정정보 · 내부 시스템 주소가 없고, 필요한 부분은 익명화했다
-
-**제출 마감: 2026-10-04 23:59 KST** (October 4, 2026, 11:59 PM Korea Standard Time)
-
-**제출 방법**
-1. **기본:** GitHub 저장소 URL
-2. **대체:** 저장소 전체를 ZIP으로 압축해 제출 (`node_modules/` 제외)
-
-회사 정책, 기밀 내용, 고객 정보 때문에 작업을 공개할 수 없다면 GitHub URL 대신 ZIP으로 제출하세요.
-공개 GitHub 저장소, 강사 collaborator 초대, Superwork 로그인이나 제품 초대는 필요하지 않습니다.
-
-**제출 링크는 강사가 별도로 안내합니다.**
-
-**제출 시 동의 사항**
-
-과제를 제출하면 부트캠프 운영과 피드백 제공을 위해 제출된 저장소 또는 ZIP을 검토하고, 비공개 Superwork Studio 환경에 가져와 검증·실행·테스트·분석하며, 1:1 리뷰 세션에서 참가자와 함께 화면에 표시하고 논의하는 것에 동의한 것으로 봅니다. 이러한 사용은 과제 피드백 및 리뷰 제공을 위한 것이며, 참가자가 작성한 원본 과제의 소유권은 참가자에게 유지됩니다.
-
-또한 제출 내용에서 회사명, 고객명, 개인 식별정보 등을 제거하고 충분히 익명화·일반화하여 참가자, 소속 회사, 고객 또는 개인을 합리적으로 특정할 수 없는 형태의 World Pattern, 구조, 예시, 통계 및 학습 내용을 Superwork 제품 개선, 교육, 연구 및 Superwork Library 구축에 활용할 수 있습니다.
-
-제출된 원본 과제를 그대로 공개 배포하지는 않습니다. 자세한 조건: [`LICENSE`](LICENSE) 7조.
+You may use one. **You make the decisions.** Start with the prompt in
+[`assignment/claude-code-prompt.md`](assignment/claude-code-prompt.md); the tool follows [`AGENTS.md`](AGENTS.md).
+When validation fails, **fix the World, not the validator.** When BREAK finds a gap, **fix the World rules, not the prompt.**
 
 ---
 
-## 규칙 하나
+## 7. Troubleshooting
 
-검증 에러가 나면 **World를 고치세요. 검증기를 고치지 마세요.**
-그리고 BREAK에서 빈틈을 찾으면 **프롬프트가 아니라 World를 고치세요.**
+| Symptom | Fix |
+|---|---|
+| `npm: command not found` / `node: command not found` | Install Node.js 20 LTS or newer from nodejs.org, open a new terminal |
+| `npm install` fails with a network or proxy error | Retry on another network; behind a company proxy set `npm config set proxy …` |
+| `sh: superwork: command not found` | Run `npm install` in the repository folder; use `npm run …` (or `npx superwork …`) |
+| validate: unknown state / role / constraint | The name in `transitions` or `guards` must match a declared state, role or constraint exactly (case-sensitive) |
+| validate: expression error | `npm run explain -- expressions`; compare strings with quotes (`x == "yes"`) |
+| `npm run package`: "world.id is still the template value" | Set your own `world.id` in `world.yaml` |
+| `npm run package`: "Fill in your name" | Edit `submission-info.json` |
+| `npm run package`: "looks like it contains …" | Remove the secret from that file (rotate it if it was real), package again |
+| A scenario's record or actor is "not found" at the review | `record` must be an id in `seed.yaml`, `as` a principal id, `transition` a transition name |
 
 ---
 
-## 라이선스와 소유권
+## License and ownership
 
-Copyright © 2026 Josh Lee. All rights reserved.
+Copyright © 2026 Josh Lee. All rights reserved. This repository is **source-available, not open source**. Its original content is
+licensed under the Educational Use Only License ([`LICENSE`](LICENSE)) for Agentic World Bootcamp participation and personal
+educational homework only. Commercial use, production use, building competing products, redistribution as a product, template or
+framework, and inclusion in third-party products or services are not permitted.
 
-이 저장소는 **소스 공개(source-available)이지만 오픈소스가 아닙니다.**
-저장소의 원본 콘텐츠는 **Educational Use Only License**([`LICENSE`](LICENSE))에 따라
-**Agentic World Bootcamp 참여와 개인 교육용 숙제**에만 사용할 수 있습니다.
-상업적 사용, 프로덕션 사용, 경쟁 제품 개발, 제품 · 템플릿 · 프레임워크로의 재배포,
-제3자 제품이나 서비스에의 포함은 허용되지 않습니다.
+- **Josh Lee** owns the original code, templates, documents, examples and other Superwork materials in this repository.
+- **You** own the homework you create with it (your World, answers, scenarios and evidence). Owning your homework does not give you rights
+  to the starter materials beyond the license.
+- npm dependencies keep their own licenses (`@superwork/world-spec`, `@superwork/cli`: MIT; `yaml`: ISC).
 
-- **Josh Lee**가 이 저장소의 원본 코드 · 템플릿 · 문서 · 예시 및 기타 Superwork 저작물을 소유합니다.
-- **여러분**은 이 저장소를 이용해 직접 만든 숙제 결과물(여러분의 World · 답안 · 시나리오 · 증거)의 소유권을 가집니다.
-- 제출하면 부트캠프 운영과 리뷰를 위한 사용(검토 · 비공개 Studio로 가져와 검증 · 실행 · 분석 · 1:1 리뷰에서 표시와 논의)과
-  참가자 · 소속 회사 · 고객 · 개인을 합리적으로 특정할 수 없도록 익명화 · 일반화된 학습 내용의 활용에 동의하게 됩니다 — [제출 시 동의 사항](#5-제출-체크리스트), `LICENSE` 7조.
-- 숙제 결과물을 소유한다고 해서, 그 안에 쓰인 스타터의 템플릿 · 문서 · 예시 등 Superwork 저작물을
-  Educational Use 라이선스 밖에서 재사용하거나 재배포할 권리가 생기지는 않습니다.
-- npm 의존성은 원래의 라이선스를 따르며 이 라이선스로 바뀌지 않습니다
-  (`@superwork/world-spec`, `@superwork/cli` — MIT, `yaml` — ISC).
-
-GitHub 이용약관에 따른 공개 저장소의 열람 · Fork 권리는 그대로 유지되며, Fork도 이 라이선스를 따릅니다.
-자세한 내용: [`LICENSE`](LICENSE), [`NOTICE`](NOTICE)
-
-*Copyright © 2026 Josh Lee. All rights reserved. This repository is source-available, not open source. Its original content is
-licensed only for Agentic World Bootcamp participation and personal educational homework; participants own their original homework,
-which does not grant rights to the starter materials beyond that license; third-party MIT/ISC components keep their licenses —
-see [`LICENSE`](LICENSE) and [`NOTICE`](NOTICE).*
+Viewing and forking under GitHub's Terms of Service remain available; forks are subject to this license. Details: [`LICENSE`](LICENSE),
+[`NOTICE`](NOTICE).

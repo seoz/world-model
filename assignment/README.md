@@ -6,11 +6,11 @@
 평가는 "정답 World"가 아니라 **여러분이 모델링을 이해하고 스스로 결정했는가**를 봅니다.
 작고 정확한 World가 크고 흐릿한 World보다 낫습니다.
 
-**제출 마감: 2026-10-04 23:59 KST** (October 4, 2026, 11:59 PM Korea Standard Time) — 제출 방법과 체크리스트는 [`../README.md`](../README.md#5-제출-체크리스트)
+**제출 마감:** `<강사가 안내합니다>` — 제출 방법과 체크리스트는 [`../README.ko.md`](../README.ko.md#5-제출) (English: [`../README.md`](../README.md#5-submit))
 
-**제출 방법:** GitHub 저장소 URL(기본) 또는 저장소 전체 ZIP(대체). 회사 정책 · 기밀 내용 · 고객 정보 때문에 공개할 수 없다면 ZIP으로 제출하세요.
-공개 GitHub 저장소, 강사 collaborator 초대, Superwork 로그인은 필요하지 않습니다. 제출 링크는 강사가 별도로 안내합니다.
-제출 시 동의 사항(리뷰를 위한 사용, 그리고 참가자 · 소속 회사 · 고객 · 개인을 합리적으로 특정할 수 없게 익명화 · 일반화된 학습 내용의 활용)은 [`../README.md`](../README.md#5-제출-체크리스트)와 [`../LICENSE`](../LICENSE) 7조를 확인하세요.
+**제출 방법:** `npm run package`로 만든 ZIP(`submission/<world-id>-<version>-submission.zip`)을 강사가 안내하는 제출 링크로 보냅니다.
+GitHub 공개 저장소, 강사 collaborator 초대, Superwork 로그인이나 Studio 접근은 필요하지 않습니다.
+제출 시 동의 사항(리뷰를 위한 사용, 그리고 참가자 · 소속 회사 · 고객 · 개인을 합리적으로 특정할 수 없게 익명화 · 일반화된 학습 내용의 활용)은 [`../README.ko.md`](../README.ko.md#5-제출)와 [`../LICENSE`](../LICENSE) 7조를 확인하세요.
 
 > **⚠️ 민감정보 주의**
 > 실제 업무를 모델링해도 좋지만 회사 기밀, 고객 개인정보, API Key, 계정정보, 내부 시스템 주소 등 민감정보를 저장소에 올리지 마세요.

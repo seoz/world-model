@@ -12,3 +12,5 @@
 
 > 검증 결과는 World가 **규격에 맞는다**는 증거일 뿐, **안전하다**는 증거가 아닙니다.
 > 안전에 대한 여러분의 주장은 `scenarios/`와 `assignment/break-fix.md`의 판정과 이유로 보여주세요.
+
+`npm run package`는 제출 ZIP에 `validation-summary.txt`(패키징 시점의 검증 요약)를 자동으로 넣습니다. 이 폴더의 파일도 함께 들어갑니다(텍스트 · 이미지, 파일당 5 MB 이하).
